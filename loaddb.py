@@ -84,7 +84,8 @@ sql_create_listing_table = """
         propertyType varchar(55),
         roomType varchar(50),
         accommodates int, 
-        bedroom float, 
+        bedrooms float,
+        beds float,
         price float,
         minimumNights int,
         reviewScoresRating float,
@@ -92,8 +93,8 @@ sql_create_listing_table = """
         reviewScoresValue float,
         instantBookable boolean,
         reviewPerMonth float,
-        neighborhoodCleansedId int,
         hostId int,
+        neighborhoodCleansedId int,
         PRIMARY KEY(listingId),
         FOREIGN KEY(hostId) REFERENCES Host(hostId),
         FOREIGN KEY(neighborhoodCleansedId) REFERENCES Address (addressId))
@@ -148,7 +149,7 @@ def insert_data_address(path, mydb):
                     continue
         print("----------------Data populated in Address Table----------------")
 
-#
+# host data insertion function
 def insert_data_host(path, mydb):
     with open(path) as csvfile:
         loaddata = csv.reader(csvfile, delimiter=',')
@@ -194,6 +195,9 @@ def insert_data_host(path, mydb):
                     continue
         print("----------------Data populated in Host Table----------------")
 
+
+
+
 def insert_data_listing(path, mydb):
     with open(path) as csvfile:
         loaddata = csv.reader(csvfile, delimiter=',')
@@ -202,17 +206,18 @@ def insert_data_listing(path, mydb):
 
         # sql statement to insert data into host table
         sql_insert = (" INSERT INTO Listing "
-        "(listingId, listingUrl, pictureUrl, description, latitude, longiture, propertyTyoe, roomType, accommodates, bedrooms, beds, price"
+        "(listingId, listingUrl, pictureUrl, description, latitude, longitude, propertyType, roomType, accommodates, bedrooms, beds, price,"
         "minimumNights, reviewScoresRating, reviewScoresAccuracy, reviewScoresValue, instantBookable, reviewPerMonth, hostId, neighborhoodCleansedId)"
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
-
+        print("connection", mydb)
         # load data in host table
         for row in loaddata:
             # do nothing for first row
             if first == True:
                 first = False
                 print('First time')
+                print(row[9])
                 print(len(row))
                 continue
             else:
@@ -238,6 +243,10 @@ def insert_data_listing(path, mydb):
                     record.append(float(row[17]))
                     record.append(int(row[18]))
                     record.append(int(row[19]))
+                    # print(record)
+                    # crs = mydb.cursor()
+                    # crs.execute(sql_insert, record)
+                    # mydb.commit()
                     try:
                         crs = mydb.cursor()
                         crs.execute(sql_insert, record)

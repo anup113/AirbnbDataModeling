@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+<h1>Hosts</h1>
+
+<div class="features">
+{% for item in fields %}
+	{{ forloop.counter }} - {{ item.name }} 
+{% endfor %}
+</div>
+
+<div id="res"></div>
+
+<div>
+  <button onclick="createbar( '{{har}}')"> Show bar </button>
+  <button onclick="createscatter()"> Show scatter </button>
+  <div>
+    <ul> Name </ul>
+    <ul> Address </ul>
+    <ul> About </ul>
+    <ul> Location </ul>
+  </div>
+</div>
+
+ 
+<script type="text/javascript">
+	// var har = '{{ har }}';
+
+
+	function createscatter(){
+		var svg = d3.select("#res")
+		  	.append("svg")
+		  	.attr("width", 1000)
+
+		// Create the scale
+		var x = d3.scaleLinear()
+		    .domain([0, 100])         // This is what is written on the Axis: from 0 to 100
+		    .range([100, 800]);       // This is where the axis is placed: from 100px to 800px
+
+		// Draw the axis
+		svg
+		  	.append("g")
+		  	.attr("transform", "translate(0,50)")      // This controls the vertical position of the Axis
+		  	.call(d3.axisBottom(x))
+	}
+
+
+	function createbar(param){
+		var dataset = param
+		d3.select("body").selectAll("div")
+		.data(dataset)
+		.enter()
+		.append("div")
+		.attr("class", "bar")
+		.style("height", function(d) {
+		  newd = d* 5
+		  return newd + "px";
+		});
+		
+	}
+	// createbar(har)
+</script>
+
+<style type="text/css">
+	div.bar {
+    display: inline-block;
+    width: 2px;
+    height: 75px;   /* We'll override this later */
+    background-color: teal;
+    margin-right: 2px;
+}
+</style>
+
+
+
+<!-- {% for item in obj %}
+	<li>{{ forloop.counter }} - {{ item.hostname }}</li>
+{% endfor %} -->
+
+
+	
+{% endblock %}
+
